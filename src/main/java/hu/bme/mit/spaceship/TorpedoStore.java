@@ -12,6 +12,9 @@ public class TorpedoStore {
   // rate of failing to fire torpedos [0.0, 1.0]
   private double FAILURE_RATE = 0.0; //NOSONAR
 
+  //Hozza adtam a Random generatort az osztalyhoz ahelyett, hogy minden metódus hivásnál új Random objektumot hozna létre
+  private static final Random generator = new Random();
+
   private int torpedoCount = 0;
 
   public TorpedoStore(int numberOfTorpedos){
@@ -30,18 +33,20 @@ public class TorpedoStore {
 
   public boolean fire(int numberOfTorpedos){
     if(numberOfTorpedos < 1 || numberOfTorpedos > this.torpedoCount){
-      new IllegalArgumentException("numberOfTorpedos");
+      //Hozzáadtam a hiányzó throw kulcsszót
+      throw new IllegalArgumentException("numberOfTorpedos");
     }
 
     boolean success = false;
 
     // simulate random overheating of the launcher bay which prevents firing
-    Random generator = new Random();
     double r = generator.nextDouble();
+    //Innen töröltem a Random generátor létrehozását, mivel már van egy statikus példány az osztályban
 
     if (r >= FAILURE_RATE) {
       // successful firing
-      this.torpedoCount =- numberOfTorpedos;
+      //megcseréltem az operátorokat, hogy a torpedókat helyesen vonja le a torpedoCount-ból
+      this.torpedoCount -= numberOfTorpedos;
       success = true;
     } else {
       // simulated failure
